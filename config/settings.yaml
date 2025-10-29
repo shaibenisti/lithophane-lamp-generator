@@ -1,0 +1,45 @@
+# Lithophane Lamp Generator Configuration
+# Premium settings for high-quality lithophane creation
+
+cylinder:
+  diameter: 60.0          # Cylinder diameter in mm
+  height: 130.0           # Cylinder height in mm
+  wall_thickness: 2.0     # Wall thickness in mm
+
+printing:
+  nozzle_diameter: 0.4    # 3D printer nozzle diameter in mm
+  layer_height: 0.12      # Layer height for printing in mm
+  min_thickness: 0.5      # Minimum lithophane thickness in mm
+  max_thickness: 2.2      # Maximum lithophane thickness in mm
+
+quality:
+  resolution: 0.15        # Processing resolution in mm (lower = higher detail)
+  mesh_quality_multiplier: 1.0  # Mesh quality multiplier
+  lithophane_coverage_angle: 200.0  # Lithophane coverage angle in degrees
+  detail_enhancement: false  # Enable detail enhancement processing (DISABLED for smooth lithophanes)
+
+margins:
+  top_margin: 2.0         # Top margin in mm
+  bottom_margin: 2.0      # Bottom margin in mm
+  edge_blend_width: 4.0   # Edge blending width in mm
+
+performance:
+  opencv_threads: 4       # Number of OpenCV processing threads
+
+# Image processing gamma values for different image types
+gamma_values:
+  portrait: 0.9
+  portrait_low_contrast: 0.8
+  underexposed: 0.7
+  overexposed: 1.2
+  low_contrast: 0.85
+  shadow_heavy: 0.75
+  highlight_heavy: 1.1
+  balanced: 1.0
+
+# Image validation settings
+validation:
+  max_file_size_mb: 50
+  min_resolution: [100, 100]
+  max_resolution: [8000, 8000]
+  supported_formats: ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.tif', '.gif']
