@@ -1,0 +1,22 @@
+cylinder:
+  diameter: 60.0
+  height: 130.0
+  wall_thickness: 2.0
+margins:
+  bottom_margin: 2.0
+  edge_blend_width: 4.0
+  top_margin: 2.0
+performance:
+  opencv_threads: 4
+printing:
+  layer_height: 0.12
+  max_thickness: 2.2
+  min_thickness: 0.5
+  nozzle_diameter: 0.4
+quality:
+  detail_enhancement: true
+  enable_portrait_autocrop: true
+  gamma_override: 1.0
+  lithophane_coverage_angle: 190.0
+  mesh_quality_multiplier: 1.2
+  resolution: 0.08

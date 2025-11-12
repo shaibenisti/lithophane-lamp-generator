@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(ls:*)",
+      "Bash(python:*)",
+      "Bash(timeout:*)",
+      "Bash(./run.bat)",
+      "Bash(git add:*)",
+      "Bash(find:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git push:*)",
+      "Bash(git rm:*)",
+      "Bash(git init:*)"
+    ],
+    "deny": []
+  }
+}

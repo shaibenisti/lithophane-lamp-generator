@@ -1,0 +1,57 @@
+# Core GUI Framework
+PyQt6>=6.4.0
+
+# Image Processing and Computer Vision
+opencv-python>=4.7.0
+numpy>=1.21.0
+Pillow>=9.0.0
+
+# AI Enhancement and Super Resolution
+torch>=2.0.0
+torchvision>=0.15.0
+realesrgan>=0.3.0
+basicsr>=1.4.2
+
+# Enhanced Face Detection
+mediapipe>=0.10.0
+
+# HEIC Image Support (iPhone photos)
+pillow-heif>=0.13.0
+
+# 3D Mesh Processing and STL Export
+trimesh>=3.20.0
+
+# Scientific Computing and Interpolation
+scipy>=1.9.0
+
+# Configuration Management
+PyYAML>=6.0.0
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# Performance Monitoring (optional)
+psutil>=5.9.0
+
+# Progress Bars (optional)
+tqdm>=4.64.0
+
+# Standard Library Dependencies (included with Python)
+# - sys
+# - math
+# - logging
+# - pathlib
+# - datetime
+# - typing
+# - dataclasses
+
+# Optional: For enhanced performance and additional features
+# Pillow>=9.0.0  # Alternative image processing (if needed)
+# matplotlib>=3.5.0  # For advanced visualization (optional)
+# numba>=0.56.0  # JIT compilation for performance (optional)
+
+# Development and Testing Dependencies (optional)
+# pytest>=7.0.0
+# black>=22.0.0
+# flake8>=4.0.0
+# mypy>=0.991
