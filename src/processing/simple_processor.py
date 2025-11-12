@@ -42,8 +42,8 @@ class SimpleImageProcessor:
 
         # CLAHE parameters - very light enhancement to avoid skin texture noise
         self.clahe = cv2.createCLAHE(
-            clipLimit=1.5,      # Reduced from 2.0 - less aggressive
-            tileGridSize=(8, 8) # Standard tile size
+            clipLimit=1.5,      # Gentle enhancement
+            tileGridSize=(16, 16) # Larger tiles = smoother, less noise
         )
 
     def process(self, image: np.ndarray, target_size: Tuple[int, int]) -> np.ndarray:
@@ -72,13 +72,24 @@ class SimpleImageProcessor:
         if self.enable_contrast_enhancement:
             enhanced = self.clahe.apply(resized)
             self.logger.info("Applied light contrast enhancement (CLAHE)")
+
+            # Step 3: Light bilateral filter to smooth skin texture while preserving edges
+            # This removes micro-texture noise without destroying facial features
+            smoothed = cv2.bilateralFilter(
+                enhanced,
+                d=5,              # Diameter - small for subtle smoothing
+                sigmaColor=40,    # Color similarity - moderate
+                sigmaSpace=40     # Spatial distance - moderate
+            )
+            self.logger.info("Applied bilateral smoothing for texture reduction")
+            result = smoothed
         else:
-            enhanced = resized
+            result = resized
             self.logger.info("No contrast enhancement applied")
 
-        # Step 3: Done! Return processed image
+        # Step 4: Done! Return processed image
         self.logger.info("Processing complete")
-        return enhanced
+        return result
 
     def process_with_info(self, image: np.ndarray, target_size: Tuple[int, int]) -> Tuple[np.ndarray, dict]:
         """
