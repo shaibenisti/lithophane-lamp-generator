@@ -92,7 +92,7 @@ class ThicknessMapper:
             Thickness map with blended edges
         """
         height, width = thickness_map.shape
-        blend_width = self.settings.edge_blend_width  # pixels (default 4)
+        blend_width = int(self.settings.edge_blend_width)  # pixels (default 4)
 
         if blend_width <= 0 or blend_width >= width // 4:
             return thickness_map  # Skip if blend width invalid
@@ -110,8 +110,8 @@ class ThicknessMapper:
             blend_mask[:, -(x + 1)] = x / blend_width
 
         # Calculate average thickness at edges for smooth transition
-        left_edge = thickness_map[:, :blend_width].mean()
-        right_edge = thickness_map[:, -blend_width:].mean()
+        left_edge = float(thickness_map[:, :blend_width].mean())
+        right_edge = float(thickness_map[:, -blend_width:].mean())
         average_edge = (left_edge + right_edge) / 2
 
         # Apply blending
