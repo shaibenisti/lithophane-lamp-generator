@@ -88,7 +88,7 @@ def process_with_style(image_path, style_config, output_path, settings):
     # Export
     mesh.export(str(output_path))
     file_size_mb = output_path.stat().st_size / (1024 * 1024)
-    print(f"✓ Exported: {output_path.name} ({file_size_mb:.1f} MB)")
+    print(f"[OK] Exported: {output_path.name} ({file_size_mb:.1f} MB)")
     print(f"Note: {style_config['notes']}")
 
 
@@ -132,20 +132,20 @@ def main():
         try:
             process_with_style(image_path, style_config, output_path, settings)
         except Exception as e:
-            print(f"\n✗ ERROR processing {style_name}: {e}")
+            print(f"\n[ERROR] processing {style_name}: {e}")
             import traceback
             traceback.print_exc()
             continue
 
     print(f"\n{'='*60}")
-    print(f"✓ ALL STYLES COMPLETED!")
-    print(f"✓ Output directory: {output_dir}")
-    print(f"✓ Files created:")
+    print(f"[OK] ALL STYLES COMPLETED!")
+    print(f"[OK] Output directory: {output_dir}")
+    print(f"[OK] Files created:")
     for stl_file in sorted(output_dir.glob('saba_*.stl')):
         size_mb = stl_file.stat().st_size / (1024 * 1024)
         print(f"   - {stl_file.name} ({size_mb:.1f} MB)")
-    print(f"\n✓ Load these STL files in your slicer and compare!")
-    print(f"✓ Tell me which number (1-5) looks best!")
+    print(f"\n[OK] Load these STL files in your slicer and compare!")
+    print(f"[OK] Tell me which number (1-5) looks best!")
     print(f"={'='*60}\n")
 
 
