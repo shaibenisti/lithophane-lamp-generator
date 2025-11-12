@@ -44,7 +44,7 @@ class CylinderBuilder:
         self.settings = settings
         self.logger = logging.getLogger(__name__)
     
-    def create_premium_lithophane_cylinder(self, thickness_map: np.ndarray) -> trimesh.Trimesh:
+    def create_lithophane_cylinder(self, thickness_map: np.ndarray) -> trimesh.Trimesh:
         """
         Create high quality lithophane cylinder.
         

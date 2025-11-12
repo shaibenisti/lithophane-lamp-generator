@@ -209,7 +209,7 @@ class LithophaneLampWorker(QThread):
             raise WorkerError("Cylinder builder not initialized")
         
         try:
-            return self.cylinder_builder.create_premium_lithophane_cylinder(thickness_map)
+            return self.cylinder_builder.create_lithophane_cylinder(thickness_map)
             
         except Exception as e:
             raise CylinderBuildError(f"Cylinder building failed: {e}")
