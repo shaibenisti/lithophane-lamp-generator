@@ -1,0 +1,19 @@
+# Style 2: NATURAL
+# Very light processing to maintain natural appearance
+# Result: Clean with natural tones
+
+name: "Natural"
+description: "Very light CLAHE + gentle smoothing"
+
+clahe:
+  enabled: true
+  clip_limit: 1.2
+  tile_size: [16, 16]
+
+bilateral_filter:
+  enabled: true
+  diameter: 5
+  sigma_color: 30
+  sigma_space: 30
+
+notes: "Subtle enhancement. Best for portraits with good lighting."

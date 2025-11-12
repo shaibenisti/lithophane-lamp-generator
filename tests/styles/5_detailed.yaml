@@ -1,0 +1,19 @@
+# Style 5: DETAILED
+# Preserve more detail with minimal smoothing
+# Result: Crisp features, more texture
+
+name: "Detailed"
+description: "Strong CLAHE + minimal smoothing"
+
+clahe:
+  enabled: true
+  clip_limit: 2.0
+  tile_size: [12, 12]
+
+bilateral_filter:
+  enabled: true
+  diameter: 3
+  sigma_color: 25
+  sigma_space: 25
+
+notes: "Maximizes detail. May show some skin texture. Good for sharp images."

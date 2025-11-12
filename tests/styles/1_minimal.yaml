@@ -1,0 +1,19 @@
+# Style 1: MINIMAL
+# Absolute minimum processing - just resize, nothing else
+# Result: Most faithful to original image, may lack contrast
+
+name: "Minimal Processing"
+description: "Just resize, no enhancement, no smoothing"
+
+clahe:
+  enabled: false
+  clip_limit: 0
+  tile_size: [8, 8]
+
+bilateral_filter:
+  enabled: false
+  diameter: 0
+  sigma_color: 0
+  sigma_space: 0
+
+notes: "Preserves original tones completely. Good for high-quality images."
