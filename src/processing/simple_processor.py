@@ -40,9 +40,9 @@ class SimpleImageProcessor:
         self.enable_contrast_enhancement = enable_contrast_enhancement
         self.logger = logging.getLogger(__name__)
 
-        # CLAHE parameters - light enhancement, not aggressive
+        # CLAHE parameters - very light enhancement to avoid skin texture noise
         self.clahe = cv2.createCLAHE(
-            clipLimit=2.0,      # Gentle enhancement
+            clipLimit=1.5,      # Reduced from 2.0 - less aggressive
             tileGridSize=(8, 8) # Standard tile size
         )
 
