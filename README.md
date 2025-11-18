@@ -259,14 +259,24 @@ lithophane-lamp-generator/
 
 This project is provided as-is for personal and commercial use. Feel free to modify and distribute.
 
-## Credits
+## Development
 
-Built with:
+**Developed by Shai Benisti** with collaborative assistance from **Claude (Anthropic)**.
+
+This project is a labor of love - a personal hobby exploring the intersection of software engineering, computer vision, and 3D printing. The intelligent processing pipeline, perceptual luminance conversion, and contrast-preserving approach were developed through iterative collaboration and real-world testing.
+
+### Credits
+
+**Technology Stack:**
 - PyQt6 for the user interface
 - OpenCV for image processing and face detection
 - NumPy and SciPy for numerical computing
 - Trimesh for 3D mesh generation and STL export
 
+**Special Thanks:**
+- Claude (Anthropic) for collaborative development and implementation
+- The open-source community for the amazing libraries that made this possible
+
 ---
 
-**Ready to create beautiful lithophane lamps!** 🏮
+**Made with passion for creating beautiful lithophane lamps!** 🏮
