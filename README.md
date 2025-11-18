@@ -1,5 +1,11 @@
 # Premium Lithophane Lamp Generator
 
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](https://github.com/shaibenisti/lithophane-lamp-generator)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/shaibenisti/lithophane-lamp-generator?style=social)](https://github.com/shaibenisti/lithophane-lamp-generator/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/shaibenisti/lithophane-lamp-generator?style=social)](https://github.com/shaibenisti/lithophane-lamp-generator/network/members)
+
 A professional PyQt6 desktop application for creating 3D-printable lithophane lamp cylinders from images. Transform your photos into beautiful illuminated lamps with intelligent image processing, face detection, and high-precision 3D mesh generation.
 
 ![Application Interface](Media/GUI.png)
