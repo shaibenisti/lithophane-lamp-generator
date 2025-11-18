@@ -536,6 +536,24 @@ quality:
 - Online repository of test images
 - Plugin system for custom processors
 
+## Development & Credits
+
+**Developer:** Shai Benisti
+**Collaborative Assistant:** Claude (Anthropic)
+
+This project represents a passion for combining computer vision, image processing, and 3D printing technology. Developed as a personal hobby project with iterative refinement based on real-world testing and user feedback.
+
+### Key Design Decisions
+
+**Collaborative insights that shaped the project:**
+- **Contrast preservation over artificial brightening** - Recognizing that shadow lifting can destroy intentional dramatic lighting
+- **Perceptual luminance (Rec. 709)** - Better color interpretation for handling colored lighting and skin tones
+- **Faithful representation philosophy** - Dark areas should stay dark, bright areas should stay bright
+- **Smart gamma with minimal intervention** - Balance between automation and fidelity to the original image
+- **Noise reduction without detail loss** - Smooth skin texture while preserving facial features
+
+**Version:** 1.0.0 (2025)
+
 ---
 
 **For user documentation, see:** [README.md](../README.md)
