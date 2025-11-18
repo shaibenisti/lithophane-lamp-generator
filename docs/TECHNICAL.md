@@ -208,8 +208,8 @@ def create_thickness_map(image: np.ndarray) -> np.ndarray:
 ```python
 outer_radius = cylinder_diameter / 2
 inner_radius = outer_radius - wall_thickness
-angular_segments = 800-1400  # Based on resolution
-height_segments = 600-1200   # Based on resolution
+angular_segments = 1000-3000  # Based on resolution and quality multiplier
+height_segments = 800-2500    # Based on resolution and quality multiplier
 ```
 
 2. **Interpolation:**

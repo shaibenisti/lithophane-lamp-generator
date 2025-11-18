@@ -200,8 +200,8 @@ The application generates:
 - **Thickness variation:** 0.5mm - 2.5mm
 
 ### Mesh Quality
-- **Angular segments:** 800-1,400 (adaptive based on resolution)
-- **Height segments:** 600-1,200 (adaptive)
+- **Angular segments:** 1,000-3,000 (adaptive based on resolution and quality multiplier)
+- **Height segments:** 800-2,500 (adaptive)
 - **Interpolation:** SciPy cubic for smooth surfaces
 - **Topology:** Watertight, manifold, print-ready
 
