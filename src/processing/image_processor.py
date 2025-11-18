@@ -234,6 +234,12 @@ class IntelligentImageProcessor:
 
             # Convert to perceptual luminance using Rec. 709 standard
             if len(image.shape) == 3:
+                # Handle alpha channel (RGBA/BGRA images)
+                if image.shape[2] == 4:
+                    # Convert BGRA to BGR (drop alpha channel)
+                    image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
+                    self.logger.info("Removed alpha channel from RGBA image")
+
                 # Rec. 709 luma coefficients: Y = 0.2126*R + 0.7152*G + 0.0722*B
                 # OpenCV uses BGR, so we need: Y = 0.0722*B + 0.7152*G + 0.2126*R
                 b, g, r = cv2.split(image)
