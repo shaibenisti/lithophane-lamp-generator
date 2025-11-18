@@ -145,7 +145,9 @@ class Settings:
     def get_lithophane_dimensions(self) -> Tuple[int, int, float, float]:
         """
         Calculate lithophane dimensions based on settings.
-        
+
+        IMPROVED: Higher minimum resolution for premium quality lithophanes.
+
         Returns:
             Tuple of (width_pixels, height_pixels, arc_length_mm, image_height_mm)
         """
@@ -153,11 +155,15 @@ class Settings:
         angle_radians = math.radians(self.lithophane_coverage_angle)
         arc_length = outer_radius * angle_radians
         image_height = self.cylinder_height - self.top_margin - self.bottom_margin
-        
-        # High resolution for better detail preservation
-        base_width = max(1500, int(arc_length / self.resolution))
-        base_height = max(1800, int(image_height / self.resolution))
-        
+
+        # INCREASED minimum resolution for ultra-high quality (was 1500×1800)
+        # Apply mesh_quality_multiplier to image resolution too
+        min_width = int(2000 * self.mesh_quality_multiplier)
+        min_height = int(2400 * self.mesh_quality_multiplier)
+
+        base_width = max(min_width, int(arc_length / self.resolution))
+        base_height = max(min_height, int(image_height / self.resolution))
+
         width_pixels = base_width
         height_pixels = base_height
 
@@ -167,15 +173,23 @@ class Settings:
         """
         Calculate mesh resolution for 3D cylinder generation.
 
+        Now properly applies mesh_quality_multiplier for premium quality.
+        Higher multiplier = more segments = smoother mesh = better quality.
+
         Returns:
             Tuple of (angular_segments, height_segments)
         """
         circumference = math.pi * self.cylinder_diameter
 
-        angular_segments = int(circumference / (self.resolution * const.MESH_RESOLUTION_MULTIPLIER))
+        # Apply mesh_quality_multiplier to resolution calculation
+        # This was previously defined but never used!
+        # Lower divisor = more segments = higher quality
+        effective_resolution = self.resolution * const.MESH_RESOLUTION_MULTIPLIER / self.mesh_quality_multiplier
+
+        angular_segments = int(circumference / effective_resolution)
         angular_segments = max(const.MESH_ANGULAR_SEGMENTS_MIN, min(const.MESH_ANGULAR_SEGMENTS_MAX, angular_segments))
 
-        height_segments = int(self.cylinder_height / (self.resolution * const.MESH_RESOLUTION_MULTIPLIER))
+        height_segments = int(self.cylinder_height / effective_resolution)
         height_segments = max(const.MESH_HEIGHT_SEGMENTS_MIN, min(const.MESH_HEIGHT_SEGMENTS_MAX, height_segments))
 
         return angular_segments, height_segments

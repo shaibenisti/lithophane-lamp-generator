@@ -40,11 +40,11 @@ class SimpleImageProcessor:
         self.enable_contrast_enhancement = enable_contrast_enhancement
         self.logger = logging.getLogger(__name__)
 
-        # CLAHE parameters - Style #4 (Smooth): light enhancement with large tiles
-        # This creates smooth facial areas without amplifying skin texture
+        # CLAHE parameters - Ultra-gentle enhancement to minimize texture amplification
+        # Large tiles prevent micro-detail enhancement (pores, wrinkles, skin texture)
         self.clahe = cv2.createCLAHE(
-            clipLimit=1.3,      # Very gentle enhancement
-            tileGridSize=(24, 24) # Large tiles = very smooth, minimal noise
+            clipLimit=1.1,      # Ultra-gentle enhancement (reduced from 1.3)
+            tileGridSize=(32, 32) # Very large tiles = ultra-smooth, no texture amplification
         )
 
     def process(self, image: np.ndarray, target_size: Tuple[int, int]) -> np.ndarray:
@@ -72,24 +72,30 @@ class SimpleImageProcessor:
         # Step 2: Optional contrast enhancement
         if self.enable_contrast_enhancement:
             enhanced = self.clahe.apply(resized)
-            self.logger.info("Applied light contrast enhancement (CLAHE)")
+            self.logger.info("Applied ultra-gentle contrast enhancement (CLAHE)")
 
-            # Step 3: Bilateral filter to smooth skin texture while preserving edges
-            # Style #4 (Smooth): VERY strong smoothing eliminates all skin texture
-            # Increased parameters to handle portrait details and skin texture
+            # Step 3: AGGRESSIVE bilateral filter to eliminate skin texture
+            # Dramatically increased parameters to remove all fine texture (pores, wrinkles, hair)
+            # while preserving important edges (facial features, clothing boundaries)
             smoothed = cv2.bilateralFilter(
                 enhanced,
-                d=9,              # Diameter - larger neighborhood for stronger smoothing
-                sigmaColor=85,    # Color similarity - very high for aggressive texture removal
-                sigmaSpace=85     # Spatial distance - very high for smooth facial areas
+                d=15,              # Larger diameter for stronger smoothing (was 9)
+                sigmaColor=150,    # Very high - removes almost all texture (was 85)
+                sigmaSpace=150     # Very high - creates ultra-smooth areas (was 85)
             )
-            self.logger.info("Applied bilateral smoothing for texture reduction")
-            result = smoothed
+            self.logger.info("Applied aggressive bilateral smoothing for texture elimination")
+
+            # Step 4: Additional Gaussian smoothing to remove any remaining high-frequency noise
+            # This is the "texture killer" - removes skin pores, fine wrinkles, beard texture
+            extra_smoothed = cv2.GaussianBlur(smoothed, (7, 7), 0)
+            self.logger.info("Applied additional Gaussian smoothing for texture removal")
+
+            result = extra_smoothed
         else:
             result = resized
             self.logger.info("No contrast enhancement applied")
 
-        # Step 4: Done! Return processed image
+        # Step 5: Done! Return processed image
         self.logger.info("Processing complete")
         return result
 

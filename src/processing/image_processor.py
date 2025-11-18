@@ -184,11 +184,17 @@ class IntelligentImageProcessor:
             target_width, target_height, _, _ = self.settings.get_lithophane_dimensions()
             target_size = (target_width, target_height)
 
-            # Step 7: Process image (resize + optional CLAHE)
+            # Step 7: Process image (resize + optional CLAHE + bilateral filter + Gaussian)
             processed = self.processor.process(preprocessed, target_size)
 
+            # Step 7.5: Final texture elimination pass
+            # Apply one more gentle Gaussian blur to ensure absolutely no texture
+            # survives into the thickness map (this is the last defense)
+            final_smoothed = cv2.GaussianBlur(processed, (5, 5), 0)
+            self.logger.info("Applied final texture elimination pass")
+
             # Step 8: Create thickness map with optimal gamma
-            thickness_map = self.thickness_mapper.create_thickness_map(processed)
+            thickness_map = self.thickness_mapper.create_thickness_map(final_smoothed)
 
             # Restore original gamma
             self.thickness_mapper.gamma = original_gamma

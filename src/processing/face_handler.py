@@ -159,13 +159,19 @@ class FaceHandler:
 
             # Apply gentle CLAHE to face region only
             # This brings out facial features without over-processing
-            # Using larger tiles (16x16) to avoid amplifying skin texture/pores
-            clahe = cv2.createCLAHE(clipLimit=1.5, tileGridSize=(16, 16))
+            # Using very large tiles (24x24) to avoid amplifying any skin texture
+            clahe = cv2.createCLAHE(clipLimit=1.2, tileGridSize=(24, 24))
             face_enhanced = clahe.apply(face_roi)
 
-            # Apply Gaussian blur to smooth skin texture after CLAHE
-            # This removes fine details (pores, wrinkles) while preserving overall features
-            face_enhanced = cv2.GaussianBlur(face_enhanced, (5, 5), 0)
+            # Apply STRONG Gaussian blur to eliminate skin texture
+            # Dramatically increased kernel size to remove all pores, wrinkles, and fine hair
+            # This is critical for elderly faces with visible texture
+            face_enhanced = cv2.GaussianBlur(face_enhanced, (15, 15), 0)
+
+            # Apply morphological closing to further smooth texture
+            # This removes any remaining high-frequency details
+            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+            face_enhanced = cv2.morphologyEx(face_enhanced, cv2.MORPH_CLOSE, kernel)
 
             # Check if face is dark (shadows on face)
             face_brightness = float(np.mean(face_roi))

@@ -2,19 +2,37 @@ cylinder:
   diameter: 60.0
   height: 130.0
   wall_thickness: 2.0
+
 margins:
   bottom_margin: 0.0
   top_margin: 0.0
+
 performance:
   opencv_threads: 4
+
 printing:
   layer_height: 0.12
-  max_thickness: 2.5
-  min_thickness: 0.5
+  max_thickness: 2.5  # Maximum wall thickness (dark areas) - wider range = more contrast
+  min_thickness: 0.5  # Minimum wall thickness (bright areas)
   nozzle_diameter: 0.4
+
 quality:
   detail_enhancement: true
-  gamma_override: null  # null = smart gamma (auto-selects based on image), or set specific value (0.8-1.0)
+
+  # Gamma correction: null = smart auto-selection, or set 0.8-1.0 for manual override
+  # Lower gamma (0.8) = brighter lithophane, Higher gamma (1.0) = faithful to original
+  gamma_override: null
+
+  # Lithophane coverage angle (180-220°) - how much of cylinder has the image
   lithophane_coverage_angle: 195.0
+
+  # QUALITY MULTIPLIER: Higher = better quality but larger files (1.0-2.0 recommended)
+  # 1.0 = standard, 1.2 = high quality (current), 1.5 = ultra quality, 2.0 = extreme quality
+  # This NOW affects both mesh density AND image resolution!
   mesh_quality_multiplier: 1.2
+
+  # RESOLUTION: Lower = more detail (0.04-0.08mm recommended)
+  # 0.04mm = ultra-high detail (large files, slow)
+  # 0.06mm = high detail (current, excellent balance)
+  # 0.08mm = standard detail (faster, smaller files)
   resolution: 0.06
