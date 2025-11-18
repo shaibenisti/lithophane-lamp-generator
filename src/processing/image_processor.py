@@ -6,14 +6,14 @@ Image Processor for Lithophane Lamp Generator
 
 Smart processing pipeline:
 1. Load image (with HEIC support)
-2. Convert to grayscale
-3. Analyze image (shadows, faces)
-4. Apply intelligent enhancements (shadow lifting, face enhancement)
-5. Process (resize + optional CLAHE)
-6. Create thickness map
-7. Done!
+2. Convert to perceptual luminance (Rec. 709)
+3. Detect faces
+4. Enhance face regions (if detected)
+5. Calculate optimal gamma
+6. Process (resize + CLAHE + bilateral filter)
+7. Create thickness map
 
-Features: Face detection, shadow correction, adaptive processing.
+Features: Face detection, perceptual luminance, adaptive gamma.
 """
 
 import cv2
@@ -26,7 +26,6 @@ from ..utils.validation import ImageValidator, ValidationError
 from ..utils.heic_loader import load_image_with_heic_support
 from .simple_processor import SimpleImageProcessor
 from .thickness_mapper import ThicknessMapper
-from .shadow_lifter import ShadowLifter, ShadowAnalysis
 from .face_handler import FaceHandler, FaceDetectionResult
 
 logger = logging.getLogger(__name__)
@@ -60,17 +59,15 @@ class IntelligentImageProcessor:
         # Initialize processing components
         self.processor = SimpleImageProcessor(enable_contrast_enhancement=True)
         self.thickness_mapper = ThicknessMapper(settings)
-        self.shadow_lifter = ShadowLifter()
         self.face_handler = FaceHandler()
 
         # Set OpenCV threads
         cv2.setNumThreads(settings.opencv_threads)
 
-        self.logger.info("Image processor initialized (smart pipeline with face/shadow detection)")
+        self.logger.info("Image processor initialized (smart pipeline with face detection)")
 
     def _calculate_smart_gamma(self, image: np.ndarray,
-                               face_result: FaceDetectionResult,
-                               shadow_analysis: ShadowAnalysis) -> float:
+                               face_result: FaceDetectionResult) -> float:
         """
         Calculate optimal gamma based on image characteristics.
 
@@ -81,7 +78,6 @@ class IntelligentImageProcessor:
         Args:
             image: Input grayscale image
             face_result: Face detection results
-            shadow_analysis: Shadow analysis results
 
         Returns:
             Optimal gamma value
@@ -139,10 +135,10 @@ class IntelligentImageProcessor:
 
         Pipeline:
         1. Validate and load image
-        2. Detect faces (if any)
-        3. Analyze shadows
-        4. Apply shadow lifting (if needed)
-        5. Enhance face regions (if faces detected)
+        2. Convert to perceptual luminance
+        3. Detect faces (if any)
+        4. Enhance face regions (if faces detected)
+        5. Calculate optimal gamma
         6. Resize and enhance contrast
         7. Create thickness map
 
@@ -168,28 +164,8 @@ class IntelligentImageProcessor:
             self.logger.info("Analyzing image for faces...")
             face_result = self.face_handler.detect_faces(image)
 
-            # Step 4: Analyze shadows
-            self.logger.info("Analyzing shadows...")
-            shadow_analysis = self.shadow_lifter.analyze_shadows(image)
-
-            # Step 5: Apply intelligent pre-processing
+            # Step 4: Apply intelligent pre-processing
             preprocessed = image.copy()
-
-            # Lift shadows if needed
-            if shadow_analysis.has_heavy_shadows:
-                self.logger.info("Heavy shadows detected, applying shadow lift")
-                if face_result.has_faces:
-                    # Use face-aware shadow lifting
-                    preprocessed = self.shadow_lifter.process_with_face_preservation(
-                        preprocessed, face_result.face_regions
-                    )
-                else:
-                    # Regular shadow lifting
-                    preprocessed = self.shadow_lifter.lift_shadows(
-                        preprocessed, shadow_analysis
-                    )
-            else:
-                self.logger.info("No heavy shadows, skipping shadow lift")
 
             # Enhance faces if detected
             if face_result.has_faces:
@@ -198,27 +174,27 @@ class IntelligentImageProcessor:
                     preprocessed, face_result
                 )
 
-            # Step 6: Calculate optimal gamma based on image analysis
-            optimal_gamma = self._calculate_smart_gamma(image, face_result, shadow_analysis)
+            # Step 5: Calculate optimal gamma based on image analysis
+            optimal_gamma = self._calculate_smart_gamma(image, face_result)
             # Temporarily override gamma for this image
             original_gamma = self.thickness_mapper.gamma
             self.thickness_mapper.gamma = optimal_gamma
 
-            # Step 7: Get target dimensions from settings
+            # Step 6: Get target dimensions from settings
             target_width, target_height, _, _ = self.settings.get_lithophane_dimensions()
             target_size = (target_width, target_height)
 
-            # Step 8: Process image (resize + optional CLAHE)
+            # Step 7: Process image (resize + optional CLAHE)
             processed = self.processor.process(preprocessed, target_size)
 
-            # Step 9: Create thickness map with optimal gamma
+            # Step 8: Create thickness map with optimal gamma
             thickness_map = self.thickness_mapper.create_thickness_map(processed)
 
             # Restore original gamma
             self.thickness_mapper.gamma = original_gamma
 
             self.logger.info("✓ Smart image processing completed successfully")
-            self._log_processing_summary(face_result, shadow_analysis)
+            self._log_processing_summary(face_result)
 
             return thickness_map
 
@@ -236,13 +212,16 @@ class IntelligentImageProcessor:
 
     def _load_and_convert_image(self, image_path: str) -> np.ndarray:
         """
-        Load image with HEIC support and convert to grayscale.
+        Load image with HEIC support and convert to perceptual luminance.
+
+        Uses Rec. 709 standard for perceptual luminance conversion which handles
+        colored lighting and skin tones better than simple grayscale conversion.
 
         Args:
             image_path: Path to image file
 
         Returns:
-            Grayscale image (uint8)
+            Perceptual luminance image (uint8)
 
         Raises:
             ImageProcessingError: If loading fails
@@ -253,11 +232,25 @@ class IntelligentImageProcessor:
             if image is None:
                 raise ImageProcessingError(f"Cannot load image from: {image_path}")
 
-            # Convert to grayscale if needed
+            # Convert to perceptual luminance using Rec. 709 standard
             if len(image.shape) == 3:
-                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                # Rec. 709 luma coefficients: Y = 0.2126*R + 0.7152*G + 0.0722*B
+                # OpenCV uses BGR, so we need: Y = 0.0722*B + 0.7152*G + 0.2126*R
+                b, g, r = cv2.split(image)
+
+                # Calculate perceptual luminance
+                luminance = (
+                    0.0722 * b.astype(np.float32) +
+                    0.7152 * g.astype(np.float32) +
+                    0.2126 * r.astype(np.float32)
+                )
+
+                # Convert back to uint8
+                gray = np.clip(luminance, 0, 255).astype(np.uint8)
+                self.logger.info("Converted to perceptual luminance (Rec. 709)")
             else:
                 gray = image.copy()
+                self.logger.info("Image already grayscale")
 
             return gray
 
@@ -282,27 +275,17 @@ class IntelligentImageProcessor:
             for warning in quality['warnings']:
                 self.logger.warning(f"Image quality: {warning}")
 
-    def _log_processing_summary(self, face_result: FaceDetectionResult,
-                                shadow_analysis: ShadowAnalysis) -> None:
+    def _log_processing_summary(self, face_result: FaceDetectionResult) -> None:
         """
         Log summary of intelligent processing applied.
 
         Args:
             face_result: Face detection results
-            shadow_analysis: Shadow analysis results
         """
-        summary_parts = []
-
         if face_result.has_faces:
-            summary_parts.append(f"{face_result.face_count} face(s) enhanced")
-
-        if shadow_analysis.has_heavy_shadows:
-            summary_parts.append(f"shadows lifted ({shadow_analysis.shadow_ratio*100:.1f}%)")
-
-        if summary_parts:
-            self.logger.info(f"Smart processing applied: {', '.join(summary_parts)}")
+            self.logger.info(f"Smart processing applied: {face_result.face_count} face(s) enhanced")
         else:
-            self.logger.info("No special processing needed (image already well-exposed)")
+            self.logger.info("Processing complete (no faces detected)")
 
     def get_processing_info(self) -> Dict[str, Any]:
         """
@@ -313,7 +296,7 @@ class IntelligentImageProcessor:
         """
         return {
             'pipeline': 'smart',
-            'features': ['face_detection', 'shadow_lifting', 'adaptive_enhancement'],
+            'features': ['face_detection', 'perceptual_luminance', 'adaptive_enhancement'],
             'contrast_enhancement': True,
             'min_thickness': self.settings.min_thickness,
             'max_thickness': self.settings.max_thickness,
