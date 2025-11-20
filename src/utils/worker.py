@@ -20,6 +20,14 @@ from ..processing.image_processor import IntelligentImageProcessor, ImageProcess
 from ..processing.cylinder_builder import CylinderBuilder, CylinderBuildError
 from ..utils.validation import ValidationError, FileValidator
 
+# Try to import GPU builder, fall back to CPU if not available
+try:
+    from ..processing.cylinder_builder_gpu import GPUCylinderBuilder
+    GPU_AVAILABLE = True
+except (ImportError, Exception) as e:
+    GPU_AVAILABLE = False
+    logger.warning(f"GPU builder not available, using CPU: {e}")
+
 
 logger = logging.getLogger(__name__)
 
@@ -130,7 +138,19 @@ class LithophaneLampWorker(QThread):
         """Initialize image processor and cylinder builder."""
         try:
             self.image_processor = IntelligentImageProcessor(self.settings)
-            self.cylinder_builder = CylinderBuilder(self.settings)
+
+            # Try to use GPU builder if available, fallback to CPU
+            if GPU_AVAILABLE:
+                try:
+                    self.cylinder_builder = GPUCylinderBuilder(self.settings)
+                    self.logger.info("GPU-accelerated cylinder builder initialized (CUDA)")
+                except Exception as gpu_error:
+                    self.logger.warning(f"GPU builder failed, falling back to CPU: {gpu_error}")
+                    self.cylinder_builder = CylinderBuilder(self.settings)
+                    self.logger.info("CPU cylinder builder initialized")
+            else:
+                self.cylinder_builder = CylinderBuilder(self.settings)
+                self.logger.info("CPU cylinder builder initialized")
 
         except (ImportError, AttributeError, TypeError) as e:
             raise WorkerError(f"Failed to initialize processors: {e}")
@@ -178,23 +198,33 @@ class LithophaneLampWorker(QThread):
     def _build_cylinder(self, thickness_map: np.ndarray) -> trimesh.Trimesh:
         """
         Build 3D cylinder mesh.
-        
+
         Args:
             thickness_map: Processed thickness map
-            
+
         Returns:
             3D mesh object
-            
+
         Raises:
             CylinderBuildError: If cylinder building fails
         """
         if not self.cylinder_builder:
             raise WorkerError("Cylinder builder not initialized")
-        
+
         try:
             return self.cylinder_builder.create_lithophane_cylinder(thickness_map)
-            
+
         except Exception as e:
+            # If GPU builder fails, try falling back to CPU
+            if GPU_AVAILABLE and isinstance(self.cylinder_builder, GPUCylinderBuilder):
+                self.logger.warning(f"GPU builder failed, falling back to CPU: {e}")
+                try:
+                    self.cylinder_builder = CylinderBuilder(self.settings)
+                    self.logger.info("Retrying with CPU builder...")
+                    return self.cylinder_builder.create_lithophane_cylinder(thickness_map)
+                except Exception as cpu_error:
+                    raise CylinderBuildError(f"Both GPU and CPU builders failed. GPU: {e}, CPU: {cpu_error}")
+
             raise CylinderBuildError(f"Cylinder building failed: {e}")
     
     def _export_stl(self, mesh: trimesh.Trimesh) -> None:

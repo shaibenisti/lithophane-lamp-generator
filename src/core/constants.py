@@ -73,18 +73,18 @@ STATUS_UPDATE_INTERVAL_MS = 100
 # ===== Mesh Resolution Constants =====
 
 # Angular segments (circumference resolution)
-# Balanced for quality and performance
+# Optimized for quality without excessive file size
 MESH_ANGULAR_SEGMENTS_MIN = 800
-MESH_ANGULAR_SEGMENTS_MAX = 1600  # Good quality without excessive processing time
+MESH_ANGULAR_SEGMENTS_MAX = 1900  # High quality, slicer-friendly
 
 # Height segments (vertical resolution)
-# Balanced for quality and performance
+# Optimized for quality without excessive file size
 MESH_HEIGHT_SEGMENTS_MIN = 600
-MESH_HEIGHT_SEGMENTS_MAX = 1400  # Good detail without excessive vertices
+MESH_HEIGHT_SEGMENTS_MAX = 1700  # High quality, slicer-friendly
 
 # Resolution calculation multiplier
-# Lower value = more segments = higher quality (balanced at 0.7)
-MESH_RESOLUTION_MULTIPLIER = 0.7  # Balanced quality/performance
+# Lower value = more segments = higher quality
+MESH_RESOLUTION_MULTIPLIER = 0.7  # Optimized balance
 
 # ===== Filename Display Constants =====
 

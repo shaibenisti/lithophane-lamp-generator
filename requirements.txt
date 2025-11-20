@@ -24,6 +24,13 @@ trimesh>=3.20.0
 # Scientific Computing and Interpolation
 scipy>=1.9.0
 
+# GPU Acceleration (NVIDIA CUDA)
+# For CUDA 13.x: Use cupy-cuda13x
+# For CUDA 12.x: Use cupy-cuda12x
+# For CUDA 11.x: Use cupy-cuda11x
+# Check your CUDA version: nvcc --version
+cupy-cuda13x>=13.0.0  # GPU-accelerated NumPy for ultra-fast mesh generation
+
 # Configuration Management
 PyYAML>=6.0.0
 
