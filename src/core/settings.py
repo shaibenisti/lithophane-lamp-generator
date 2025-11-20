@@ -146,8 +146,6 @@ class Settings:
         """
         Calculate lithophane dimensions based on settings.
 
-        IMPROVED: Higher minimum resolution for premium quality lithophanes.
-
         Returns:
             Tuple of (width_pixels, height_pixels, arc_length_mm, image_height_mm)
         """
@@ -156,10 +154,10 @@ class Settings:
         arc_length = outer_radius * angle_radians
         image_height = self.cylinder_height - self.top_margin - self.bottom_margin
 
-        # INCREASED minimum resolution for ultra-high quality (was 1500×1800)
+        # Balanced minimum resolution for good quality (1500×1800)
         # Apply mesh_quality_multiplier to image resolution too
-        min_width = int(2000 * self.mesh_quality_multiplier)
-        min_height = int(2400 * self.mesh_quality_multiplier)
+        min_width = int(1500 * self.mesh_quality_multiplier)
+        min_height = int(1800 * self.mesh_quality_multiplier)
 
         base_width = max(min_width, int(arc_length / self.resolution))
         base_height = max(min_height, int(image_height / self.resolution))

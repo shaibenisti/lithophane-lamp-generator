@@ -73,18 +73,18 @@ STATUS_UPDATE_INTERVAL_MS = 100
 # ===== Mesh Resolution Constants =====
 
 # Angular segments (circumference resolution)
-# INCREASED for ultra-high quality lithophanes (was 800-1400)
-MESH_ANGULAR_SEGMENTS_MIN = 1000
-MESH_ANGULAR_SEGMENTS_MAX = 3000  # Allows much smoother cylinders
+# Balanced for quality and performance
+MESH_ANGULAR_SEGMENTS_MIN = 800
+MESH_ANGULAR_SEGMENTS_MAX = 1600  # Good quality without excessive processing time
 
 # Height segments (vertical resolution)
-# INCREASED for better vertical detail (was 600-1200)
-MESH_HEIGHT_SEGMENTS_MIN = 800
-MESH_HEIGHT_SEGMENTS_MAX = 2500  # Prevents vertical banding
+# Balanced for quality and performance
+MESH_HEIGHT_SEGMENTS_MIN = 600
+MESH_HEIGHT_SEGMENTS_MAX = 1400  # Good detail without excessive vertices
 
 # Resolution calculation multiplier
-# Lower value = more segments = higher quality
-MESH_RESOLUTION_MULTIPLIER = 0.6  # Reduced from 0.7 for finer mesh
+# Lower value = more segments = higher quality (balanced at 0.7)
+MESH_RESOLUTION_MULTIPLIER = 0.7  # Balanced quality/performance
 
 # ===== Filename Display Constants =====
 
