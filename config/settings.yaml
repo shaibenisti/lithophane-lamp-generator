@@ -13,7 +13,7 @@ performance:
 printing:
   layer_height: 0.12
   max_thickness: 2.6  # Maximum wall thickness (dark areas) - wider range = more contrast
-  min_thickness: 0.5  # Minimum wall thickness (bright areas)
+  min_thickness: 0.6  # Minimum wall thickness (bright areas)
   nozzle_diameter: 0.4
 
 quality:
