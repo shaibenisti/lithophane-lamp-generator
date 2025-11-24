@@ -338,12 +338,6 @@ TECHNICAL QUALITY:
 * Geometry: {stats['vertices_count']:,} vertices, {stats['faces_count']:,} faces
 * File size: {stats['file_size_mb']:.1f} MB
 
-PRINT OPTIMIZATION:
-* Thickness range: {stats['thickness_range']} (calibrated for white PLA)
-* Layer height: {self.settings.layer_height}mm
-* Optimized for 0.4mm nozzle
-* Ready for LED integration (inner diameter: {self.settings.get_inner_radius()*2:.0f}mm)
-
 Processing completed in {stats['creation_time_seconds']:.1f} seconds
 Saved as: {stats['output_filename']}
 

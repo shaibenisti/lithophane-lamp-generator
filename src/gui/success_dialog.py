@@ -94,7 +94,6 @@ class SuccessDialog(QDialog):
         # Create information sections
         self.create_physical_specs_section(content_layout)
         self.create_technical_quality_section(content_layout)
-        self.create_print_optimization_section(content_layout)
         self.create_timing_section(content_layout)
         
         scroll_area.setWidget(content_widget)
@@ -128,21 +127,6 @@ class SuccessDialog(QDialog):
                 f"File Size: {self.statistics.get('file_size_mb', 0):.1f} MB"
             ],
             ThemeColors.PRIMARY_PURPLE
-        )
-        parent_layout.addWidget(section)
-    
-    def create_print_optimization_section(self, parent_layout):
-        """Create print optimization section."""
-        section = self.create_info_section(
-            "3D Printing Optimization",
-            [
-                f"Thickness Range: {self.statistics.get('thickness_range', 'N/A')}",
-                "Material: Calibrated for White PLA",
-                "Layer Height: 0.12mm recommended",
-                "Nozzle: Optimized for 0.4mm nozzle",
-                "Support: None required (hollow design)"
-            ],
-            ThemeColors.ACCENT_GREEN
         )
         parent_layout.addWidget(section)
     
